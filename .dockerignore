@@ -1,0 +1,8 @@
+# Ignore system files
+.git
+.gitignore
+.env.example
+
+# Ignore Laravel vendor and node modules
+vendor/
+node_modules/

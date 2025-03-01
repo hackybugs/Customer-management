@@ -1,0 +1,39 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy  # Ensures MySQL is ready before Laravel starts
+    networks:
+      - laravel_network
+  db:
+    image: mysql:8
+    container_name: mysql_db
+    restart: unless-stopped
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password  
+      MYSQL_DATABASE: customer_erp
+    networks:
+      - laravel_network
+    healthcheck:  # Ensures MySQL is ready before Laravel starts
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      retries: 3
+      timeout: 5s
+
+networks:
+  laravel_network:
+
+volumes:
+  db_data:
+    driver: local
